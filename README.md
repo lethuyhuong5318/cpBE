@@ -7,7 +7,6 @@ API Back End cho ứng dụng chia sẻ ảnh kèm theo Front End (JavaScript th
 ```
 ├── server.js                    # khởi tạo express, middleware, swagger, appError
 ├── prisma.config.ts / prisma/   # cấu hình + schema Prisma
-├── database/                    # file SQL tạo bảng + dữ liệu mẫu
 ├── postman/                     # file Postman collection (.json) để import
 ├── tests/                       # test tự động cho toàn bộ API (npm test)
 ├── public/
