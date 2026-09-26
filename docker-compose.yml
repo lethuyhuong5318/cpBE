@@ -1,0 +1,18 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: capstone-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: capstone_express_orm
+      TZ: Asia/Ho_Chi_Minh
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "3308:3306"
+    volumes:
+      - capstone-mysql-data:/var/lib/mysql
+      - ./database/capstone_express_orm.sql:/docker-entrypoint-initdb.d/capstone_express_orm.sql
+
+volumes:
+  capstone-mysql-data:

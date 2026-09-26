@@ -1,0 +1,789 @@
+{
+  "info": {
+    "name": "Capstone Express ORM - Pinterest clone",
+    "description": "Chạy **Auth > Đăng nhập** trước: token sẽ tự lưu vào biến `accessToken` và được gắn vào header `Authorization: Bearer {{accessToken}}` cho toàn bộ collection.\n\nTài khoản mẫu: sang@gmail.com / 123456",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3069/api"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "imageID",
+      "value": "8"
+    },
+    {
+      "key": "userID",
+      "value": "1"
+    },
+    {
+      "key": "commentID",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth (Trang đăng ký, đăng nhập)",
+      "item": [
+        {
+          "name": "Đăng ký",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@gmail.com\",\n  \"mat_khau\": \"123456\",\n  \"ho_ten\": \"Nguyễn Văn Test\",\n  \"tuoi\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Đăng nhập",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sang@gmail.com\",\n  \"mat_khau\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Làm mới token (mở rộng)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.accessToken) {",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', res.data.refreshToken);",
+                  "}",
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accessToken\": \"{{accessToken}}\",\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lấy thông tin từ token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/get-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "get-info"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Trang chủ",
+      "item": [
+        {
+          "name": "Lấy danh sách ảnh",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tìm kiếm ảnh theo tên",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/search?ten_hinh=chó&page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "ten_hinh",
+                  "value": "chó"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Trang chi tiết",
+      "item": [
+        {
+          "name": "Thông tin ảnh và người tạo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Danh sách bình luận theo id ảnh",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}/comment?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}",
+                "comment"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Kiểm tra đã lưu ảnh chưa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}/save",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}",
+                "save"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bình luận ảnh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"noi_dung\": \"Ảnh đẹp quá!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}/comment",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}",
+                "comment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lưu ảnh (mở rộng)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}/save",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}",
+                "save"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bỏ lưu ảnh (mở rộng)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}/save",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}",
+                "save"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Xoá bình luận (mở rộng)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/comment/{{commentID}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "comment",
+                "{{commentID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Trang quản lý ảnh",
+      "item": [
+        {
+          "name": "Thông tin user (từ token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ảnh đã lưu (từ token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/saved-image?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "saved-image"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ảnh đã tạo (từ token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/created-image?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "created-image"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Thông tin user theo id (mở rộng)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/{{userID}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "{{userID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ảnh đã lưu theo user id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/{{userID}}/saved-image?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "{{userID}}",
+                "saved-image"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ảnh đã tạo theo user id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/{{userID}}/created-image?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "{{userID}}",
+                "created-image"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Xoá ảnh đã tạo theo id ảnh",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}"
+              ]
+            },
+            "description": "Chỉ người tạo ảnh mới được xoá (soft delete)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Trang thêm ảnh",
+      "item": [
+        {
+          "name": "Thêm ảnh (upload file)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "hinh_anh",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "ten_hinh",
+                  "value": "Ảnh upload từ Postman",
+                  "type": "text"
+                },
+                {
+                  "key": "mo_ta",
+                  "value": "Mô tả ảnh",
+                  "type": "text"
+                },
+                {
+                  "key": "lien_ket",
+                  "value": "https://threadless.com",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image"
+              ]
+            },
+            "description": "Chọn file ảnh ở field `hinh_anh` (tối đa 20MB)."
+          },
+          "response": []
+        },
+        {
+          "name": "Thêm ảnh (bằng link)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.data && res.data.hinh_id) pm.collectionVariables.set('imageID', res.data.hinh_id);",
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ten_hinh\": \"Núi và sông\",\n  \"duong_dan\": \"https://picsum.photos/id/1018/600/800\",\n  \"mo_ta\": \"Phong cảnh\",\n  \"lien_ket\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sửa ảnh (mở rộng)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ten_hinh\": \"Tên mới\",\n  \"mo_ta\": \"Mô tả mới\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/image/{{imageID}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "image",
+                "{{imageID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chỉnh sửa thông tin cá nhân",
+      "item": [
+        {
+          "name": "Cập nhật thông tin cá nhân (json)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ho_ten\": \"Sang Nguyễn\",\n  \"tuoi\": 23,\n  \"ten_nguoi_dung\": \"sangnguyen\",\n  \"gioi_thieu\": \"Kể câu chuyện của bạn\",\n  \"trang_web\": \"https://example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cập nhật thông tin + ảnh đại diện (form-data)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "anh_dai_dien",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "ho_ten",
+                  "value": "Sang Nguyễn",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Đổi mật khẩu (mở rộng)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mat_khau_cu\": \"123456\",\n  \"mat_khau_moi\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
