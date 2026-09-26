@@ -29,7 +29,12 @@ app.use((req, res, next) => {
 
 app.use(appError);
 
-app.listen(PORT, () => {
-  console.log(`server online at localhost:${PORT}`);
-  console.log(`swagger: localhost:${PORT}/api-docs`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`server online at localhost:${PORT}`);
+    console.log(`swagger: localhost:${PORT}/api-docs`);
+  });
+}
+
+export default app;
+
