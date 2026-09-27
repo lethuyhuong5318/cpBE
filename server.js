@@ -21,6 +21,10 @@ app.use(express.static("public"));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.get("/", (req, res) => {
+  res.json({ message: "Capstone Express API Server online", docs: "/api-docs" });
+});
+
 app.use("/api", appLimit, rootRouter);
 
 app.use((req, res, next) => {
