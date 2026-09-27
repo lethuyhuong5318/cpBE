@@ -1,5 +1,5 @@
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "./generated/prisma/client.ts";
+import { PrismaClient } from "@prisma/client";
 import { DATABASE_URL } from "../constants/app.constant.js";
 
 const connectionString = DATABASE_URL || "mysql://root:1234@localhost:3306/capstone_express_orm";
